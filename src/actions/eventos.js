@@ -4,14 +4,15 @@ import { types } from "../types/types";
 
 export const eventsStartAddNew = (event) => {
     //post
-    return async(dispatch, getState) => {
+    return async (dispatch, getState) => {
 
         const { uid, name } = getState().auth;
         try {
             const resp = await fetchConAxios("event", event, "POST");
             console.log(resp);
-            const body = await JSON.stringify(resp.data.eventos);
-            if (body.ok) {
+            const body = await JSON.stringify(resp.data.evento);
+            console.log("body", body);
+            if (body) {
                 event.id = body.eid;
                 event.user = {
                     _id: uid,
@@ -49,12 +50,11 @@ export const eventsUpdate = (event) => ({
 });
 
 export const eventsStartUpdate = (event) => {
-    return async(dispatch) => {
+    return async (dispatch) => {
         try {
-            const resp = await fetchConAxios(`event/${ event.id }`, event, "PUT");
+            const resp = await fetchConAxios(`event/${event.id}`, event, "PUT");
             console.log(resp)
             const body = await JSON.stringify(resp.data.ok);
-
             if (body) {
                 Swal.fire('Evento Editado', '', 'success');
                 dispatch(eventsUpdated(event));
@@ -77,16 +77,16 @@ const eventsUpdated = (event) => ({
 });
 
 export const eventsStartDelete = (id) => {
-    return async(dispatch) => {
+    return async (dispatch) => {
         try {
             const resp = await fetchConToken(`event/${id}`, {}, "DELETE");
+            console.log(resp)
             const body = await resp.json();
             console.log(body)
-            if (body.ok) {
-                console.log('ok')
+            if (body) {
                 Swal.fire('Evento eliminado', '', 'success');
                 dispatch(eventsDeleted());
-                dispatch(eventsLoaded());
+                dispatch(eventsStartLoading());
             }
 
         } catch (error) {
@@ -100,7 +100,7 @@ const eventsDeleted = () => ({
 });
 
 export const eventsStartLoading = () => {
-    return async(dispatch) => {
+    return async (dispatch) => {
         try {
             const resp = await fetchConToken("event");
             const body = await resp.json();
@@ -113,7 +113,7 @@ export const eventsStartLoading = () => {
 }
 
 export const eventsCercanosStartLoading = () => {
-    return async(dispatch) => {
+    return async (dispatch) => {
         try {
             const resp = await fetchConToken("event/eventoscercanos/");
             const body = await resp.json();
@@ -127,7 +127,7 @@ export const eventsCercanosStartLoading = () => {
 
 export const buscarStartLoading = (event) => {
     console.log(event);
-    return async(dispatch) => {
+    return async (dispatch) => {
         try {
             const resp = await fetchConToken(`event/buscar/${event}`);
             const body = await resp.json();

@@ -18,6 +18,8 @@ const initialState = {
     rcantidadgruposusuarios: [],
     rcantidadchatusuarios: [],
     rcantidadusuarioschat: [],
+    cantidadcantidadusuarios: [],
+    cantidadusuariosconectados: []
 };
 
 export const dashboardReducer = (state = initialState, action) => {
@@ -96,6 +98,16 @@ export const dashboardReducer = (state = initialState, action) => {
             return {
                 ...state,
                 rcantidadusuarioschat: action.payload
+            }
+        case types.dashboardCantidadU:
+            return {
+                ...state,
+                cantidadcantidadusuarios: action.payload
+            }
+        case types.dashboardUsuariosC:
+            return {
+                ...state,
+                cantidadusuariosconectados: action.payload
             }
         default:
             return state;

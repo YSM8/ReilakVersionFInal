@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import moment from 'moment';
+import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 
 import { Bar, Pie } from 'react-chartjs-2';
 
@@ -17,9 +18,12 @@ import {
     dashboardRadioEventosUsuarios,
     dashboardRadioCanalesUsuarios,
     dashboardRadioGruposUsuarios,
-    dashboardRadioUsuariosChat
-
+    dashboardRadioUsuariosChat,
+    dashboardCantidadUsuarios,
+    dashboardUsuariosConectados
 } from "../../actions/dashboardRadios";
+import { userStartLoading } from "../../actions/usuarios";
+import { postStartLoading } from "../../actions/post";
 
 //InitEvents
 const initEvent = {
@@ -27,7 +31,7 @@ const initEvent = {
     opcionTablas: 'Publicaciones',
     opcionDashboard: 'Usuarios',
     tabla: '',
-    fullscreen: ''
+    fullscreen: 'NoFullscreen'
 }
 
 export const DashboardScreen = () => {
@@ -41,6 +45,8 @@ export const DashboardScreen = () => {
     //UseEffect
     useEffect(() => {
         dispatch(eventsStartLoading());
+        dispatch(userStartLoading());
+        dispatch(postStartLoading());
         dispatch(dashboardRadioCantidadEdad());
         dispatch(dashboardRadioCantidadArea());
         dispatch(dashboardRadioCantidadRol());
@@ -53,11 +59,16 @@ export const DashboardScreen = () => {
         dispatch(dashboardRadioCanalesUsuarios());
         dispatch(dashboardRadioGruposUsuarios());
         dispatch(dashboardRadioUsuariosChat());
+        // dispatch(dashboardCantidadUsuarios());
+        // dispatch(dashboardUsuariosConectados());
         setFormValues(initEvent);
     }, [setFormValues])
 
     //UseSelector
+    const { users } = useSelector(state => state.users);
+    const { posts } = useSelector(state => state.post);
     const { events } = useSelector(state => state.events);
+    const { chats } = useSelector(state => state.chat);
     const {
         rcantidadedad,
         rcantidadarea,
@@ -70,8 +81,11 @@ export const DashboardScreen = () => {
         rcantidadeventoscategoria,
         rcantidadgruposusuarios,
         rcantidadchatusuarios,
-        rcantidadusuarioschat
+        rcantidadusuarioschat,
+        cantidadcantidadusuarios,
+        cantidadusuariosconectados
     } = useSelector(state => state.dashboard);
+    console.log(cantidadcantidadusuarios);
     //FormValues
 
     const { opcionDashboard, fullscreen } = formValues;
@@ -170,7 +184,7 @@ export const DashboardScreen = () => {
                                 <i class="far fa-calendar-alt"></i>
                             </div>
                         }
-                        {(opcionDashboard == "Chat") ?
+                        {/* {(opcionDashboard == "Chat") ?
                             <div className="opt seleccionado">
                                 <i class="fas fa-comments"></i>
                             </div>
@@ -178,16 +192,22 @@ export const DashboardScreen = () => {
                             <div className="opt" onClick={() => { OpcionDashboard("Chat"); }}>
                                 <i class="fas fa-comments"></i>
                             </div>
-                        }
+                        } */}
                     </div>
                     <div className="body">
-                        {(opcionDashboard == "Usuarios") ?
+                        {(opcionDashboard == "Usuarios" && fullscreen == "NoFullscreen") ?
                             <div className="dcontenido">
-                                <div className="dprimerarow">
+                                <div className="dprimerarowcompleta">
                                     <div className="dapartado">
                                         <div className="dtitulo dtabla">
                                             <div className="opttabla">
-
+                                                <ReactHTMLTableToExcel
+                                                    id="test-table-xls-button"
+                                                    className="download-table-xls-button"
+                                                    table="descargar-tabla-usuarios"
+                                                    filename="TablaUsuarios"
+                                                    sheet="Usuarios"
+                                                    buttonText="XLS" />
                                             </div>
                                             <div className="opttabla">
                                                 Tabla de usuarios
@@ -204,72 +224,97 @@ export const DashboardScreen = () => {
 
                                         </div>
                                         <div className="dinfo">
-                                            <table>
+                                            <table id="descargar-tabla-usuarios">
+
                                                 <thead>
                                                     <tr>
-                                                        <th scope="col">Account</th>
-                                                        <th scope="col">Due Date</th>
-                                                        <th scope="col">Amount</th>
-                                                        <th scope="col">Period</th>
+                                                        <th scope="col">Imagen</th>
+                                                        <th scope="col">Nombre</th>
+                                                        <th scope="col">A. Paterno</th>
+                                                        <th scope="col">Edad</th>
+                                                        <th scope="col">Fono</th>
+                                                        <th scope="col">Rol</th>
+                                                        <th scope="col">Area</th>
+
+                                                        <th scope="col">Nacimiento</th>
+                                                        <th scope="col">Estado</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr>
-                                                        <td data-label="Account">Visa - 3412</td>
-                                                        <td data-label="Due Date">04/01/2016</td>
-                                                        <td data-label="Amount">$1,190</td>
-                                                        <td data-label="Period">03/01/2016 - 03/31/2016</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td scope="row" data-label="Account">Visa - 6076</td>
-                                                        <td data-label="Due Date">03/01/2016</td>
-                                                        <td data-label="Amount">$2,443</td>
-                                                        <td data-label="Period">02/01/2016 - 02/29/2016</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td scope="row" data-label="Account">Corporate AMEX</td>
-                                                        <td data-label="Due Date">03/01/2016</td>
-                                                        <td data-label="Amount">$1,181</td>
-                                                        <td data-label="Period">02/01/2016 - 02/29/2016</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td scope="row" data-label="Acount">Visa - 3412</td>
-                                                        <td data-label="Due Date">02/01/2016</td>
-                                                        <td data-label="Amount">$842</td>
-                                                        <td data-label="Period">01/01/2016 - 01/31/2016</td>
-                                                    </tr>
+                                                    {users.map(({ imgusuario, name, apellidoPaterno, apeliidoMaterno, edad, emailp, fono, rol, area, cargo, nacimiento, estado }, i) =>
+                                                        <tr>
+                                                            <td data-label="Account"><img src={imgusuario} height="30px" width='30px' style={{ borderRadius: '50%' }} /></td>
+                                                            <td data-label="Due Date">{name}</td>
+                                                            <td data-label="Amount">{apellidoPaterno}</td>
+                                                            <td data-label="Account">{edad}</td>
+
+                                                            <td data-label="Amount">{fono}</td>
+                                                            <td data-label="Period">{rol}</td>
+                                                            <td data-label="Account">{area}</td>
+
+                                                            <td data-label="Amount">{moment(nacimiento).format("DD-MM-yy")}</td>
+                                                            <td data-label="Period">{estado}</td>
+                                                        </tr>
+                                                    )}
                                                 </tbody>
                                             </table>
                                         </div>
                                     </div>
-                                    <div className="dapartado">
+                                    {/* <div className="dapartado">
                                         <div className="dtitulo">
                                             Usuarios por edad
                                         </div>
                                         <div className="dsubtitulo">
 
                                         </div>
-                                        <div className="dinfo">
-                                            Usuarios por edad
+                                        <div className="dinfo valores">
+                                            <div className="dvalores dvsolo">
+                                                <div className="dvtitulo">
+                                                    Usuarios Totales
+                                                </div>
+                                                <div className="dvinfo">
+                                                    {cantidadcantidadusuarios.lenght}
+                                                </div>
+                                            </div>
+                                            <div className="dvalores ddiv">
+
+                                                <div className="dvalores dvduo">
+                                                    <div className="dvtitulo">
+                                                        Usuarios Conectados
+                                                    </div>
+                                                    <div className="dvinfo">
+                                                        {cantidadusuariosconectados}
+                                                    </div>
+                                                </div>
+
+
+                                                <div className="dvalores dvduo">
+                                                    <div className="dvtitulo">
+                                                        Usuarios desconectados
+                                                    </div>
+                                                    <div className="dvinfo">
+                                                        {cantidadcantidadusuarios - cantidadusuariosconectados}
+                                                    </div>
+                                                </div>
+
+                                            </div>
                                         </div>
-                                    </div>
+                                    </div> */}
                                 </div>
                                 <div className="dsegundarow">
                                     <div className="dapartado">
                                         <div className="dtitulo">
-                                            Usuarios por edad
+                                            Conexiones por edad
                                         </div>
                                         <div className="dsubtitulo">
-                                            <select class="form-control" onChange={handleInputChange} name="estado" id="exampleFormControlSelect2">
-                                                <option defaultValue>Seleccione un estado...</option>
-                                                <option value="Activo">Activo</option>
-                                                <option value="Inactivo">Inactivo</option>
-                                            </select>
+
                                         </div>
                                         <div className="dinfo">
                                             <Pie
                                                 data={{
-                                                    labels: ['Conectados de la semana', 'Desconectados de la semana'],
+                                                    labels: rcantidadedad.map(({ _id, conexiones }, i) =>
+                                                        [_id]
+                                                    ),
                                                     datasets: [{
                                                         label: 'Conexiones',
                                                         data: rcantidadedad.map(({ _id, conexiones }, i) =>
@@ -309,19 +354,19 @@ export const DashboardScreen = () => {
                                     </div>
                                     <div className="dapartado">
                                         <div className="dtitulo">
-                                            Usuarios por area
+                                            Conexiones por area
                                         </div>
                                         <div className="dsubtitulo">
-                                            <select class="form-control" onChange={handleInputChange} name="estado" id="exampleFormControlSelect2">
-                                                <option defaultValue>Seleccione un estado...</option>
-                                                <option value="Activo">Activo</option>
-                                                <option value="Inactivo">Inactivo</option>
-                                            </select>
+
                                         </div>
                                         <div className="dinfo">
                                             <Pie
                                                 data={{
-                                                    labels: ['Conectados de la semana', 'Desconectados de la semana'],
+                                                    labels: rcantidadarea.map(({ _id, conexiones }, i) =>
+                                                        [
+                                                            _id
+                                                        ]
+                                                    ),
                                                     datasets: [{
                                                         label: 'Conexiones',
                                                         data: rcantidadarea.map(({ _id, conexiones }, i) =>
@@ -361,19 +406,19 @@ export const DashboardScreen = () => {
                                     </div>
                                     <div className="dapartado">
                                         <div className="dtitulo">
-                                            Usuarios por rol
+                                            Conexiones por rol
                                         </div>
                                         <div className="dsubtitulo">
-                                            <select class="form-control" onChange={handleInputChange} name="estado" id="exampleFormControlSelect2">
-                                                <option defaultValue>Seleccione un estado...</option>
-                                                <option value="Activo">Activo</option>
-                                                <option value="Inactivo">Inactivo</option>
-                                            </select>
+
                                         </div>
                                         <div className="dinfo">
                                             <Pie
                                                 data={{
-                                                    labels: ['Conectados de la semana', 'Desconectados de la semana'],
+                                                    labels: rcantidadrol.map(({ _id, conexiones }, i) =>
+                                                        [
+                                                            _id
+                                                        ]
+                                                    ),
                                                     datasets: [{
                                                         label: 'Conexiones',
                                                         data: rcantidadrol.map(({ _id, conexiones }, i) =>
@@ -413,94 +458,143 @@ export const DashboardScreen = () => {
                                     </div>
                                 </div>
                             </div>
-                            :
-                            ""
-                        }
-                        {(opcionDashboard == "Publicaciones") ?
-                            <div className="dcontenido">
-                                <div className="dprimerarow">
+                            : (opcionDashboard == "Usuarios" && fullscreen == "Fullscreen") ?
+                                <div className="dfcontenido">
                                     <div className="dapartado">
                                         <div className="dtitulo dtabla">
                                             <div className="opttabla">
+                                                <ReactHTMLTableToExcel
+                                                    id="test-table-xls-button"
+                                                    className="download-table-xls-button"
+                                                    table="descargar-tabla-usuarios"
+                                                    filename="TablaUsuarios"
+                                                    sheet="Usuarios"
+                                                    buttonText="XLS" />
+                                            </div>
+                                            <div className="opttabla">
+                                                Tabla de usuarios
+                                            </div>
+                                            <div className="opttabla">
+                                                {(fullscreen == "Fullscreen") ?
+                                                    <i class="fas fa-compress" onClick={() => { Fullscreen("NoFullscreen"); }}></i>
+                                                    :
+                                                    <i class="fas fa-expand 4x" onClick={() => { Fullscreen("Fullscreen"); }}></i>
+                                                }
+                                            </div>
+                                        </div>
+                                        <div className="dsubtitulo">
 
+                                        </div>
+                                        <div className="dinfo">
+                                            <table id="descargar-tabla-usuarios">
+
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col">Imagen</th>
+                                                        <th scope="col">Nombre</th>
+                                                        <th scope="col">A. Paterno</th>
+
+                                                        <th scope="col">Edad</th>
+                                                        <th scope="col">Fono</th>
+                                                        <th scope="col">Rol</th>
+                                                        <th scope="col">Area</th>
+                                                        <th scope="col">Cargo</th>
+                                                        <th scope="col">Nacimiento</th>
+                                                        <th scope="col">Estado</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {users.map(({ imgusuario, name, apellidoPaterno, apeliidoMaterno, edad, emailp, fono, rol, area, cargo, nacimiento, estado }, i) =>
+                                                        <tr>
+                                                            <td data-label="Account"><img src={imgusuario} height="30px" width='30px' style={{ borderRadius: '50%' }} /></td>
+                                                            <td data-label="Due Date">{name}</td>
+                                                            <td data-label="Amount">{apellidoPaterno}</td>
+                                                            <td data-label="Account">{edad}</td>
+
+                                                            <td data-label="Amount">{fono}</td>
+                                                            <td data-label="Period">{rol}</td>
+                                                            <td data-label="Account">{area}</td>
+                                                            <td data-label="Due Date">{cargo}</td>
+                                                            <td data-label="Amount">{moment(nacimiento).format("DD-MM-yy")}</td>
+                                                            <td data-label="Period">{estado}</td>
+                                                        </tr>
+                                                    )}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                : ""
+                        }
+
+                        {(opcionDashboard == "Publicaciones" && fullscreen == "NoFullscreen") ?
+                            <div className="dcontenido">
+                                <div className="dprimerarowcompleta">
+                                    <div className="dapartado">
+                                        <div className="dtitulo dtabla">
+                                            <div className="opttabla">
+                                                <div className="opttabla">
+                                                    <ReactHTMLTableToExcel
+                                                        id="test-table-xls-button"
+                                                        className="download-table-xls-button"
+                                                        table="descargar-tabla-publicaciones"
+                                                        filename="TablaPublicaciones"
+                                                        sheet="Publicaciones"
+                                                        buttonText="XLS" />
+                                                </div>
                                             </div>
                                             <div className="opttabla">
                                                 Tabla de publicaciones
                                             </div>
                                             <div className="opttabla">
-                                                <i class="fas fa-expand 4x"></i>
+                                                {(fullscreen == "Fullscreen") ?
+                                                    <i class="fas fa-compress" onClick={() => { Fullscreen("NoFullscreen"); }}></i>
+                                                    :
+                                                    <i class="fas fa-expand 4x" onClick={() => { Fullscreen("Fullscreen"); }}></i>
+                                                }
                                             </div>
                                         </div>
                                         <div className="dsubtitulo">
 
                                         </div>
                                         <div className="dinfo">
-                                            <table>
+                                            <table id="descargar-tabla-publicaciones">
                                                 <thead>
                                                     <tr>
-                                                        <th scope="col">Account</th>
-                                                        <th scope="col">Due Date</th>
-                                                        <th scope="col">Amount</th>
-                                                        <th scope="col">Period</th>
+                                                        <th scope="col">Titulo</th>
+
+                                                        <th scope="col">Categoria</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr>
-                                                        <td data-label="Account">Visa - 3412</td>
-                                                        <td data-label="Due Date">04/01/2016</td>
-                                                        <td data-label="Amount">$1,190</td>
-                                                        <td data-label="Period">03/01/2016 - 03/31/2016</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td scope="row" data-label="Account">Visa - 6076</td>
-                                                        <td data-label="Due Date">03/01/2016</td>
-                                                        <td data-label="Amount">$2,443</td>
-                                                        <td data-label="Period">02/01/2016 - 02/29/2016</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td scope="row" data-label="Account">Corporate AMEX</td>
-                                                        <td data-label="Due Date">03/01/2016</td>
-                                                        <td data-label="Amount">$1,181</td>
-                                                        <td data-label="Period">02/01/2016 - 02/29/2016</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td scope="row" data-label="Acount">Visa - 3412</td>
-                                                        <td data-label="Due Date">02/01/2016</td>
-                                                        <td data-label="Amount">$842</td>
-                                                        <td data-label="Period">01/01/2016 - 01/31/2016</td>
-                                                    </tr>
+                                                    {posts.map(({ titulo, id, contenido, categoria }, i) =>
+                                                        <tr>
+                                                            <td data-label="Account">{titulo}</td>
+
+                                                            <td data-label="Amount">{categoria}</td>
+                                                        </tr>
+                                                    )}
                                                 </tbody>
                                             </table>
-                                        </div>
-                                    </div>
-                                    <div className="dapartado">
-                                        <div className="dtitulo">
-                                            Publicaciones por fecha
-                                        </div>
-                                        <div className="dsubtitulo">
-
-                                        </div>
-                                        <div className="dinfo">
-                                            Usuarios por edad
                                         </div>
                                     </div>
                                 </div>
                                 <div className="dsegundarow">
                                     <div className="dapartado">
                                         <div className="dtitulo">
-                                            Publicaiones por usuario
+                                            Publicaciones por usuario
                                         </div>
                                         <div className="dsubtitulo">
-                                            <select class="form-control" onChange={handleInputChange} name="estado" id="exampleFormControlSelect2">
-                                                <option defaultValue>Seleccione un estado...</option>
-                                                <option value="Activo">Activo</option>
-                                                <option value="Inactivo">Inactivo</option>
-                                            </select>
+
                                         </div>
                                         <div className="dinfo">
                                             <Pie
                                                 data={{
-                                                    labels: ['Conectados de la semana', 'Desconectados de la semana'],
+                                                    labels: rcantidadpublicacionesusuarios.map(({ _id, conexiones }, i) =>
+                                                        [
+                                                            _id.name
+                                                        ]
+                                                    ),
                                                     datasets: [{
                                                         label: 'Conexiones',
                                                         data: rcantidadpublicacionesusuarios.map(({ _id, conexiones }, i) =>
@@ -540,19 +634,19 @@ export const DashboardScreen = () => {
                                     </div>
                                     <div className="dapartado">
                                         <div className="dtitulo">
-                                            Publicaciones por fecha
+                                            Reacciones por publicación
                                         </div>
                                         <div className="dsubtitulo">
-                                            <select class="form-control" onChange={handleInputChange} name="estado" id="exampleFormControlSelect2">
-                                                <option defaultValue>Seleccione un estado...</option>
-                                                <option value="Activo">Activo</option>
-                                                <option value="Inactivo">Inactivo</option>
-                                            </select>
+
                                         </div>
                                         <div className="dinfo">
                                             <Pie
                                                 data={{
-                                                    labels: ['Conectados de la semana', 'Desconectados de la semana'],
+                                                    labels: rcantidadpublicacionesfecha.map(({ _id, conexiones }, i) =>
+                                                        [
+                                                            _id
+                                                        ]
+                                                    ),
                                                     datasets: [{
                                                         label: 'Conexiones',
                                                         data: rcantidadpublicacionesfecha.map(({ _id, conexiones }, i) =>
@@ -595,16 +689,16 @@ export const DashboardScreen = () => {
                                             Publicaciones por categoria
                                         </div>
                                         <div className="dsubtitulo">
-                                            <select class="form-control" onChange={handleInputChange} name="estado" id="exampleFormControlSelect2">
-                                                <option defaultValue>Seleccione un estado...</option>
-                                                <option value="Activo">Activo</option>
-                                                <option value="Inactivo">Inactivo</option>
-                                            </select>
+
                                         </div>
                                         <div className="dinfo">
                                             <Pie
                                                 data={{
-                                                    labels: ['Conectados de la semana', 'Desconectados de la semana'],
+                                                    labels: rcantidadpublicacionescategoria.map(({ _id, conexiones }, i) =>
+                                                        [
+                                                            _id
+                                                        ]
+                                                    ),
                                                     datasets: [{
                                                         label: 'Conexiones',
                                                         data: rcantidadpublicacionescategoria.map(({ _id, conexiones }, i) =>
@@ -644,35 +738,97 @@ export const DashboardScreen = () => {
                                     </div>
                                 </div>
                             </div>
-                            :
-                            ""
-                        }
-                        {(opcionDashboard == "Eventos") ?
-                            <div className="dcontenido">
-                                <div className="dprimerarow">
+                            : (opcionDashboard == "Publicaciones" && fullscreen == "Fullscreen") ?
+                                <div className="dfcontenido">
                                     <div className="dapartado">
                                         <div className="dtitulo dtabla">
                                             <div className="opttabla">
-
+                                                <ReactHTMLTableToExcel
+                                                    id="test-table-xls-button"
+                                                    className="download-table-xls-button"
+                                                    table="descargar-tabla-publicaciones"
+                                                    filename="TablaPublicaciones"
+                                                    sheet="Publicaciones"
+                                                    buttonText="XLS" />
                                             </div>
                                             <div className="opttabla">
-                                                Tabla de eventos
+                                                Tabla de usuarios
                                             </div>
                                             <div className="opttabla">
-                                                <i class="fas fa-expand 4x"></i>
+                                                {(fullscreen == "Fullscreen") ?
+                                                    <i class="fas fa-compress" onClick={() => { Fullscreen("NoFullscreen"); }}></i>
+                                                    :
+                                                    <i class="fas fa-expand 4x" onClick={() => { Fullscreen("Fullscreen"); }}></i>
+                                                }
                                             </div>
                                         </div>
                                         <div className="dsubtitulo">
 
                                         </div>
                                         <div className="dinfo">
-                                            <table>
+                                            <table id="descargar-tabla-publicaciones">
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col">Titulo</th>
+
+                                                        <th scope="col">Categoria</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {posts.map(({ titulo, id, contenido, categoria }, i) =>
+                                                        <tr>
+                                                            <td data-label="Account">{titulo}</td>
+
+                                                            <td data-label="Amount">{categoria}</td>
+                                                        </tr>
+                                                    )}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                : ""
+
+                        }
+
+                        {(opcionDashboard == "Eventos" && fullscreen == "NoFullscreen") ?
+                            <div className="dcontenido">
+                                <div className="dprimerarowcompleta">
+                                    <div className="dapartado">
+                                        <div className="dtitulo dtabla">
+                                            <div className="opttabla">
+                                                <div className="opttabla">
+                                                    <ReactHTMLTableToExcel
+                                                        id="test-table-xls-button"
+                                                        className="download-table-xls-button"
+                                                        table="descargar-tabla-eventos"
+                                                        filename="TablaEventos"
+                                                        sheet="Eventos"
+                                                        buttonText="XLS" />
+                                                </div>
+                                            </div>
+                                            <div className="opttabla">
+                                                Tabla de eventos
+                                            </div>
+                                            <div className="opttabla">
+                                                {(fullscreen == "Fullscreen") ?
+                                                    <i class="fas fa-compress" onClick={() => { Fullscreen("NoFullscreen"); }}></i>
+                                                    :
+                                                    <i class="fas fa-expand 4x" onClick={() => { Fullscreen("Fullscreen"); }}></i>
+                                                }
+                                            </div>
+                                        </div>
+                                        <div className="dsubtitulo">
+
+                                        </div>
+                                        <div className="dinfo ">
+                                            <table id="descargar-tabla-eventos">
                                                 <thead>
                                                     <tr>
                                                         <th scope="col">Titulo</th>
                                                         <th scope="col">descripcion</th>
-                                                        <th scope="col">start</th>
-                                                        <th scope="col">end</th>
+                                                        <th scope="col">Inicio</th>
+                                                        <th scope="col">Final</th>
                                                         <th scope="col">tipo</th>
                                                     </tr>
                                                 </thead>
@@ -690,17 +846,6 @@ export const DashboardScreen = () => {
                                             </table>
                                         </div>
                                     </div>
-                                    <div className="dapartado">
-                                        <div className="dtitulo">
-                                            Usuarios por edad
-                                        </div>
-                                        <div className="dsubtitulo">
-
-                                        </div>
-                                        <div className="dinfo">
-                                            Usuarios por edad
-                                        </div>
-                                    </div>
                                 </div>
                                 <div className="dsegundarow">
                                     <div className="dapartado">
@@ -708,16 +853,16 @@ export const DashboardScreen = () => {
                                             Eventos por usuario
                                         </div>
                                         <div className="dsubtitulo">
-                                            <select class="form-control" onChange={handleInputChange} name="estado" id="exampleFormControlSelect2">
-                                                <option defaultValue>Seleccione un estado...</option>
-                                                <option value="Activo">Activo</option>
-                                                <option value="Inactivo">Inactivo</option>
-                                            </select>
+
                                         </div>
                                         <div className="dinfo">
                                             <Pie
                                                 data={{
-                                                    labels: ['Conectados de la semana', 'Desconectados de la semana'],
+                                                    labels: rcantidadeventosusuarios.map(({ _id, conexiones }, i) =>
+                                                        [
+                                                            _id.name
+                                                        ]
+                                                    ),
                                                     datasets: [{
                                                         label: 'Conexiones',
                                                         data: rcantidadeventosusuarios.map(({ _id, conexiones }, i) =>
@@ -757,19 +902,19 @@ export const DashboardScreen = () => {
                                     </div>
                                     <div className="dapartado">
                                         <div className="dtitulo">
-                                            Eventos por fecha
+                                            Tipos de Eventos
                                         </div>
                                         <div className="dsubtitulo">
-                                            <select class="form-control" onChange={handleInputChange} name="estado" id="exampleFormControlSelect2">
-                                                <option defaultValue>Seleccione un estado...</option>
-                                                <option value="Activo">Activo</option>
-                                                <option value="Inactivo">Inactivo</option>
-                                            </select>
+
                                         </div>
                                         <div className="dinfo">
                                             <Pie
                                                 data={{
-                                                    labels: ['Conectados de la semana', 'Desconectados de la semana'],
+                                                    labels: rcantidadeventosfecha.map(({ _id, conexiones }, i) =>
+                                                        [
+                                                            _id
+                                                        ]
+                                                    ),
                                                     datasets: [{
                                                         label: 'Conexiones',
                                                         data: rcantidadeventosfecha.map(({ _id, conexiones }, i) =>
@@ -815,17 +960,112 @@ export const DashboardScreen = () => {
 
                                         </div>
                                         <div className="dinfo">
+                                            <Pie
+                                                data={{
+                                                    labels: rcantidadeventoscategoria.map(({ _id, conexiones }, i) =>
+                                                        [
+                                                            _id
+                                                        ]
+                                                    ),
+                                                    datasets: [{
+                                                        label: 'Conexiones',
+                                                        data: rcantidadeventoscategoria.map(({ _id, conexiones }, i) =>
+                                                            [
+                                                                conexiones
+                                                            ]
+                                                        ),
+                                                        backgroundColor: [
+                                                            'rgba(255, 99, 132, 0.2)',
+                                                            'rgba(54, 162, 235, 0.2)',
+                                                            'rgba(255, 206, 86, 0.2)',
+                                                            'rgba(75, 192, 192, 0.2)',
+                                                            'rgba(153, 102, 255, 0.2)',
+                                                            'rgba(255, 159, 64, 0.2)',
+                                                        ],
+                                                        borderColor: [
+                                                            'rgba(255, 99, 132, 1)',
+                                                            'rgba(54, 162, 235, 1)',
+                                                            'rgba(255, 206, 86, 1)',
+                                                            'rgba(75, 192, 192, 1)',
+                                                            'rgba(153, 102, 255, 1)',
+                                                            'rgba(255, 159, 64, 1)',
+                                                        ],
+                                                    }]
 
+                                                }}
+                                                options={{
+                                                    layout: {
+                                                        padding: 8,
+
+                                                    },
+                                                    responsive: true,
+                                                    maintainAspectRatio: false,
+                                                }}
+                                            />
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            :
-                            ""
+                            : (opcionDashboard == "Eventos" && fullscreen == "Fullscreen") ?
+                                <div className="dfcontenido">
+                                    <div className="dapartado">
+                                        <div className="dtitulo dtabla">
+                                            <div className="opttabla">
+                                                <ReactHTMLTableToExcel
+                                                    id="test-table-xls-button"
+                                                    className="download-table-xls-button"
+                                                    table="descargar-tabla-eventos"
+                                                    filename="TablaEventos"
+                                                    sheet="Eventos"
+                                                    buttonText="XLS" />
+                                            </div>
+                                            <div className="opttabla">
+                                                Tabla de usuarios
+                                            </div>
+                                            <div className="opttabla">
+                                                {(fullscreen == "Fullscreen") ?
+                                                    <i class="fas fa-compress" onClick={() => { Fullscreen("NoFullscreen"); }}></i>
+                                                    :
+                                                    <i class="fas fa-expand 4x" onClick={() => { Fullscreen("Fullscreen"); }}></i>
+                                                }
+                                            </div>
+                                        </div>
+                                        <div className="dsubtitulo">
+
+                                        </div>
+                                        <div className="dinfo">
+                                            <table id="descargar-tabla-eventos">
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col">Titulo</th>
+                                                        <th scope="col">descripcion</th>
+                                                        <th scope="col">Inicio</th>
+                                                        <th scope="col">Final</th>
+                                                        <th scope="col">tipo</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {events.map(({ titulo, id, descripcion, start, end, tipo }, i) =>
+                                                        <tr>
+                                                            <td data-label="Account">{titulo}</td>
+                                                            <td data-label="Due Date">{descripcion}</td>
+                                                            <td data-label="Amount">{moment(start).format("DD-MM-yy")}</td>
+                                                            <td data-label="Period">{moment(end).format("DD-MM-yy")}</td>
+                                                            <td data-label="Period">{tipo}</td>
+                                                        </tr>
+                                                    )}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                : ""
+
                         }
-                        {(opcionDashboard == "Chat") ?
+
+                        {/* {(opcionDashboard == "Chat" && fullscreen == "NoFullscreen") ?
                             <div className="dcontenido">
-                                <div className="dprimerarow">
+                                <div className="dprimerarowcompleta">
                                     <div className="dapartado">
                                         <div className="dtitulo dtabla">
                                             <div className="opttabla">
@@ -835,27 +1075,40 @@ export const DashboardScreen = () => {
                                                 Tabla de chats
                                             </div>
                                             <div className="opttabla">
-                                                <i class="fas fa-expand 4x"></i>
+                                                {(fullscreen == "Fullscreen") ?
+                                                    <i class="fas fa-compress" onClick={() => { Fullscreen("NoFullscreen"); }}></i>
+                                                    :
+                                                    <i class="fas fa-expand 4x" onClick={() => { Fullscreen("Fullscreen"); }}></i>
+                                                }
                                             </div>
                                         </div>
                                         <div className="dsubtitulo">
 
                                         </div>
                                         <div className="dinfo">
-                                            Usuarios por edad
+                                            <table>
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col">Account</th>
+                                                        <th scope="col">Due Date</th>
+                                                        <th scope="col">Amount</th>
+                                                        <th scope="col">Period</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {chats.map(({ titulo, id, descripcion, start, end, tipo }, i) =>
+                                                        <tr>
+                                                            <td data-label="Account">Visa - 3412</td>
+                                                            <td data-label="Due Date">04/01/2016</td>
+                                                            <td data-label="Amount">$1,190</td>
+                                                            <td data-label="Period">03/01/2016 - 03/31/2016</td>
+                                                        </tr>
+                                                    )}
+                                                </tbody>
+                                            </table>
                                         </div>
                                     </div>
-                                    <div className="dapartado">
-                                        <div className="dtitulo">
-                                            Chats por mes
-                                        </div>
-                                        <div className="dsubtitulo">
 
-                                        </div>
-                                        <div className="dinfo">
-                                            Usuarios por edad
-                                        </div>
-                                    </div>
                                 </div>
                                 <div className="dsegundarow">
                                     <div className="dapartado">
@@ -872,7 +1125,11 @@ export const DashboardScreen = () => {
                                         <div className="dinfo">
                                             <Pie
                                                 data={{
-                                                    labels: ['Conectados de la semana', 'Desconectados de la semana'],
+                                                    labels: rcantidadgruposusuarios.map(({ _id, conexiones }, i) =>
+                                                        [
+                                                            _id
+                                                        ]
+                                                    ),
                                                     datasets: [{
                                                         label: 'Conexiones',
                                                         data: rcantidadgruposusuarios.map(({ _id, conexiones }, i) =>
@@ -924,7 +1181,11 @@ export const DashboardScreen = () => {
                                         <div className="dinfo">
                                             <Pie
                                                 data={{
-                                                    labels: ['Conectados de la semana', 'Desconectados de la semana'],
+                                                    labels: rcantidadchatusuarios.map(({ _id, conexiones }, i) =>
+                                                        [
+                                                            _id
+                                                        ]
+                                                    ),
                                                     datasets: [{
                                                         label: 'Conexiones',
                                                         data: rcantidadchatusuarios.map(({ _id, conexiones }, i) =>
@@ -964,7 +1225,7 @@ export const DashboardScreen = () => {
                                     </div>
                                     <div className="dapartado">
                                         <div className="dtitulo">
-                                            Uduarios por chat
+                                            Chats por usuario
                                         </div>
                                         <div className="dsubtitulo">
                                             <select class="form-control" onChange={handleInputChange} name="estado" id="exampleFormControlSelect2">
@@ -976,7 +1237,11 @@ export const DashboardScreen = () => {
                                         <div className="dinfo">
                                             <Pie
                                                 data={{
-                                                    labels: ['Conectados de la semana', 'Desconectados de la semana'],
+                                                    labels: rcantidadusuarioschat.map(({ _id, conexiones }, i) =>
+                                                        [
+                                                            _id.name
+                                                        ]
+                                                    ),
                                                     datasets: [{
                                                         label: 'Conexiones',
                                                         data: rcantidadusuarioschat.map(({ _id, conexiones }, i) =>
@@ -1016,9 +1281,60 @@ export const DashboardScreen = () => {
                                     </div>
                                 </div>
                             </div>
-                            :
-                            ""
-                        }
+                            : (opcionDashboard == "Chat" && fullscreen == "Fullscreen") ?
+                                <div className="dfcontenido">
+                                    <div className="dapartado">
+                                        <div className="dtitulo dtabla">
+                                            <div className="opttabla">
+                                                <ReactHTMLTableToExcel
+                                                    id="test-table-xls-button"
+                                                    className="download-table-xls-button"
+                                                    table="descargar-tabla-usuarios"
+                                                    filename="TablaUsuarios"
+                                                    sheet="Usuarios"
+                                                    buttonText="" />
+                                            </div>
+                                            <div className="opttabla">
+                                                Tabla de usuarios
+                                            </div>
+                                            <div className="opttabla">
+                                                {(fullscreen == "Fullscreen") ?
+                                                    <i class="fas fa-compress" onClick={() => { Fullscreen("NoFullscreen"); }}></i>
+                                                    :
+                                                    <i class="fas fa-expand 4x" onClick={() => { Fullscreen("Fullscreen"); }}></i>
+                                                }
+                                            </div>
+                                        </div>
+                                        <div className="dsubtitulo">
+
+                                        </div>
+                                        <div className="dinfo">
+                                            <table id="descargar-tabla-usuarios">
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col">Account</th>
+                                                        <th scope="col">Due Date</th>
+                                                        <th scope="col">Amount</th>
+                                                        <th scope="col">Period</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {chats.map(({ titulo, id, descripcion, start, end, tipo }, i) =>
+                                                        <tr>
+                                                            <td data-label="Account">Visa - 3412</td>
+                                                            <td data-label="Due Date">04/01/2016</td>
+                                                            <td data-label="Amount">$1,190</td>
+                                                            <td data-label="Period">03/01/2016 - 03/31/2016</td>
+                                                        </tr>
+                                                    )}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                : ""
+
+                        } */}
                     </div>
                 </div>
             </div>

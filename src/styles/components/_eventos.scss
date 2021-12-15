@@ -9,6 +9,10 @@
     i {
         color: $morado;
     }
+    button {
+        background-color: $morado;
+        border-color: $morado;
+    }
 }
 
 .contenedor-lista-eventos-ysm {
@@ -98,8 +102,8 @@
     height: 40%;
     width: 60%;
     border-radius: 8px;
-    background-color: $fondo-contenido;
-    color: $texto-principal;
+    background-color: $blanco-0;
+    color: $negro-0;
 }
 
 .input-eventos-ysm::placeholder {

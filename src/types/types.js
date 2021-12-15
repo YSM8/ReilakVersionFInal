@@ -111,4 +111,6 @@ export const types = {
     dashboardRadiosGU: '[dashboard] Connections GU',
     dashboardRadiosCU: '[dashboard] Connections CU',
     dashboardRadiosUC: '[dashboard] Connections UC',
+    dashboardCantidadU: '[dashboard] Connections CCU',
+    dashboardUsuariosC: '[dashboard] Connections CUC',
 }

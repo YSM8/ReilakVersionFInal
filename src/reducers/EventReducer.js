@@ -36,9 +36,6 @@ export const eventReducer = (state = initialState, action) => {
         case types.eventsDeleted:
             return {
                 ...state,
-                events: state.events.filter(
-                    e => (e.id !== state.activeEvents.id)
-                ),
                 activeEvents: null
             }
 

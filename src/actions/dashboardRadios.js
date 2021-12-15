@@ -1,6 +1,44 @@
 import { fetchConAxios, fetchConToken } from "../helpers/fetch";
 import { types } from "../types/types";
 
+export const dashboardCantidadUsuarios = () => {
+    return async (dispatch) => {
+        try {
+            const resp = await fetchConToken(`dashboard/dcantidadu/`);
+            const body = await resp.json();
+            console.log(body);
+            const conexiones = body.usuario1;
+            dispatch(dashboardCantidadU(conexiones));
+        } catch (error) {
+            console.log(error)
+        }
+    }
+}
+
+const dashboardCantidadU = (dashboard) => ({
+    type: types.dashboardCantidadU,
+    payload: dashboard,
+});
+
+export const dashboardUsuariosConectados = () => {
+    return async (dispatch) => {
+        try {
+            const resp = await fetchConToken(`dashboard/dusuariosc/`);
+            const body = await resp.json();
+            console.log(body);
+            const conexiones = body.usuario1;
+            dispatch(dashboardUsuariosC(conexiones));
+        } catch (error) {
+            console.log(error)
+        }
+    }
+}
+
+const dashboardUsuariosC = (dashboard) => ({
+    type: types.dashboardUsuariosC,
+    payload: dashboard,
+});
+
 export const dashboardRadioConexiones = () => {
     return async (dispatch) => {
         try {

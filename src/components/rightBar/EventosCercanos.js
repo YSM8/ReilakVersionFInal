@@ -34,10 +34,10 @@ export const EventosCercanos = () => {
     tipoActual
   } = formValues;
 
-  const mes = moment(tiempoActual).format("MMMM")
+  const mes = moment(tiempoActual).format("MM")
   const dia = moment(tiempoActual).format("DD")
   const diaescrito = moment(tiempoActual).format("dddd")
-
+  console.log(mes);
   const verificadorEvento = (tipo, reunion) => {
     const er = reunion
     const arraystring = er.toString();
@@ -51,8 +51,8 @@ export const EventosCercanos = () => {
   }
 
   const handleTipoEvento = (tipoEve) => {
-    console.log("tipoEve: "+tipoEve);
-    if("Proximos Eventos" == tipoEve){
+    console.log("tipoEve: " + tipoEve);
+    if ("Proximos Eventos" == tipoEve) {
       setFormValues({
         ...formValues,
         tipoEvento: tipoEve,
@@ -60,7 +60,7 @@ export const EventosCercanos = () => {
       });
       dispatch(eventsCercanosStartLoading());
     }
-    else if("Proximas Reuniones" == tipoEve){
+    else if ("Proximas Reuniones" == tipoEve) {
       setFormValues({
         ...formValues,
         tipoEvento: tipoEve,
@@ -69,9 +69,8 @@ export const EventosCercanos = () => {
       console.log(tipoActual);
       dispatch(eventsCercanosStartLoading());
     }
-    
-  }
 
+  }
   return (
 
     <div className="container-evecercanos-ysm">
@@ -89,7 +88,7 @@ export const EventosCercanos = () => {
         </div>
         <div className="eventos-container-evecercanos-ysm">
           {events.map(({ titulo, id, descripcion, start, tipo, end, reunion }, i) =>
-            verificadorEvento(tipo, reunion) == "block" && tipoActual == tipo ? 
+            verificadorEvento(tipo, reunion) == "block" && tipoActual == tipo && mes <= moment(end).format("MM") && dia <= moment(end).format("DD") ?
               <div className="evento-container-evecercanos-ysm">
                 <div className="evento-evecercanos-ysm">
                   <div className="calendario-evecercanos-ysm">
@@ -103,21 +102,21 @@ export const EventosCercanos = () => {
                   </div>
                 </div>
               </div>
-              :verificadorEvento(tipo, reunion) == "block"  && tipoActual == tipo?
-              <div className="evento-container-evecercanos-ysm">
-                <div className="evento-evecercanos-ysm">
-                  <div className="calendario-evecercanos-ysm">
-                    <time datetime="2014-2-20" className="icon">
-                    <strong>{moment(start).format("MMMM").toUpperCase()}</strong>
-                      <span>{moment(start).format("DD")}</span>
-                    </time>
-                  </div>
-                  <div className="descripcion-evecercanos-ysm">
-                    {titulo}
+              : verificadorEvento(tipo, reunion) == "block" && tipoActual == tipo && mes <= moment(end).format("MM") && dia <= moment(end).format("DD") ?
+                <div className="evento-container-evecercanos-ysm">
+                  <div className="evento-evecercanos-ysm">
+                    <div className="calendario-evecercanos-ysm">
+                      <time datetime="2014-2-20" className="icon">
+                        <strong>{moment(start).format("MMMM").toUpperCase()}</strong>
+                        <span>{moment(start).format("DD")}</span>
+                      </time>
+                    </div>
+                    <div className="descripcion-evecercanos-ysm">
+                      {titulo}
+                    </div>
                   </div>
                 </div>
-              </div>
-              : "" 
+                : ""
           )}
         </div>
       </div>

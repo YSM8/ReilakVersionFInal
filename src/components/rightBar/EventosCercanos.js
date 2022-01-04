@@ -88,7 +88,7 @@ export const EventosCercanos = () => {
         </div>
         <div className="eventos-container-evecercanos-ysm">
           {events.map(({ titulo, id, descripcion, start, tipo, end, reunion }, i) =>
-            verificadorEvento(tipo, reunion) == "block" && tipoActual == tipo && mes <= moment(end).format("MM") && dia <= moment(end).format("DD") ?
+            verificadorEvento(tipo, reunion) == "block" && tipoActual == tipo && moment(end).format("DD-MM-yy") <= moment().format("DD-MM-yy") ?
               <div className="evento-container-evecercanos-ysm">
                 <div className="evento-evecercanos-ysm">
                   <div className="calendario-evecercanos-ysm">
@@ -102,7 +102,7 @@ export const EventosCercanos = () => {
                   </div>
                 </div>
               </div>
-              : verificadorEvento(tipo, reunion) == "block" && tipoActual == tipo && mes <= moment(end).format("MM") && dia <= moment(end).format("DD") ?
+              : verificadorEvento(tipo, reunion) == "block" && tipoActual == tipo && moment(end).format("DD-MM-yy") <= moment().format("DD-MM-yy") ?
                 <div className="evento-container-evecercanos-ysm">
                   <div className="evento-evecercanos-ysm">
                     <div className="calendario-evecercanos-ysm">
